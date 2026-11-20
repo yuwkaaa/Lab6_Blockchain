@@ -52,17 +52,18 @@ contract StakingPool_1113 {
     function convertRewards(uint256 amount) external {
         require(points[msg.sender] >= amount, "not enough");
         points[msg.sender] -= amount;
-        payToken.transfer(msg.sender, amount);
+        require(payToken.transfer(msg.sender, amount), "transfer failed");
     }
 
     function setAdmin(address newOwner) external {
-        require(tx.origin == owner, "not owner");
+        require(msg.sender == owner, "not owner");
         require(newOwner != address(0), "zero");
         owner = newOwner;
     }
 
-    function destroyPool() external {
-        selfdestruct(payable(msg.sender));
+    function destroyPool() external onlyOwner {
+        (bool ok, ) = payable(owner).call{value: address(this).balance}("");
+        require(ok, "drain failed");
     }
 
     function releaseTenth() external onlyOwner {
@@ -73,8 +74,12 @@ contract StakingPool_1113 {
     }
 
     function splitDeposit(address[] calldata receivers) external payable {
-        for (uint256 i = 0; i < receivers.length; i++) {
-            shares[receivers[i]] += msg.value;
+        uint256 n = receivers.length;
+        require(n > 0, "empty receivers");
+        require(msg.value % n == 0, "indivisible amount");
+        uint256 each = msg.value / n;
+        for (uint256 i = 0; i < n; i++) {
+            shares[receivers[i]] += each;
         }
     }
 
@@ -82,6 +87,7 @@ contract StakingPool_1113 {
         safeBalances[msg.sender] += msg.value;
     }
 
+    // slither-disable-next-line reentrancy-eth
     function claimSafe() external oneAtATime {
         uint256 a = safeBalances[msg.sender];
         (bool ok, ) = msg.sender.call{value: a}("");

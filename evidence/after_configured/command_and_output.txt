@@ -1,0 +1,12 @@
+COMMAND: slither AuditTarget.sol --config-file slither.config.json --fail-none --json evidence/after_configured/slither.json
+SLITHER_VERSION:
+0.11.6
+
+SOLC_VERSION:
+solc, the solidity compiler commandline interface
+Version: 0.8.24+commit.e11b9ed9.Linux.g++
+
+AuditTarget.sol analyzed (2 contracts with 64 detectors), 0 result(s) found
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'solc --version' running
+'solc AuditTarget.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/home/yuwkaa/Lab06_SinhVien' running

@@ -1,0 +1,38 @@
+COMMAND: slither AuditTarget.sol --config-file config/slither.raw.json --fail-none --json evidence/after_raw/slither.json
+SLITHER_VERSION:
+0.11.6
+
+SOLC_VERSION:
+solc, the solidity compiler commandline interface
+Version: 0.8.24+commit.e11b9ed9.Linux.g++
+
+
+Detector: events-access
+StakingPool_1113.setAdmin(address) (AuditTarget.sol#58-62) should emit an event for: 
+	- owner = newOwner (AuditTarget.sol#61) 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control
+
+Detector: timestamp
+StakingPool_1113.releaseTenth() (AuditTarget.sol#69-74) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= nextRelease,locked) (AuditTarget.sol#70)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in StakingPool_1113.ownerWithdraw(uint256) (AuditTarget.sol#42-45):
+	- (ok,None) = address(owner).call{value: amount}() (AuditTarget.sol#43)
+Low level call in StakingPool_1113.destroyPool() (AuditTarget.sol#64-67):
+	- (ok,None) = address(owner).call{value: address(this).balance}() (AuditTarget.sol#65)
+Low level call in StakingPool_1113.releaseTenth() (AuditTarget.sol#69-74):
+	- (ok,None) = address(owner).call{value: address(this).balance / 10}() (AuditTarget.sol#72)
+Low level call in StakingPool_1113.claimSafe() (AuditTarget.sol#91-96):
+	- (ok,None) = msg.sender.call{value: a}() (AuditTarget.sol#93)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+
+Detector: naming-convention
+Contract StakingPool_1113 (AuditTarget.sol#10-97) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+AuditTarget.sol analyzed (2 contracts with 102 detectors), 7 result(s) found
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'solc --version' running
+'solc AuditTarget.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/home/yuwkaa/Lab06_SinhVien' running
