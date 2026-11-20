@@ -1,0 +1,16 @@
+{
+  "mode": "configured",
+  "tag": "before",
+  "count": {
+    "High": 4,
+    "Medium": 1,
+    "Low": 0,
+    "Informational": 0,
+    "Optimization": 0,
+    "Other": 0
+  },
+  "total": 5,
+  "solc": "solc, the solidity compiler commandline interface\nVersion: 0.8.24+commit.e11b9ed9.Linux.g++",
+  "command": "slither AuditTarget.sol --config-file slither.config.json --fail-none --json evidence/before_configured/slither.json",
+  "process_exit_code": 0
+}

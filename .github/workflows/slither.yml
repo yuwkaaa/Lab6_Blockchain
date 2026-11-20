@@ -1,0 +1,21 @@
+name: Lab06 Slither gate
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Slither Solidity 0.8.24 (High + Medium gate)
+        uses: crytic/slither-action@v0.4.2
+        with:
+          target: AuditTarget.sol
+          solc-version: '0.8.24'
+          slither-version: '0.11.6'
+          slither-config: slither.config.json
+          fail-on: medium

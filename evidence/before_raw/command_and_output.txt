@@ -1,0 +1,67 @@
+COMMAND: slither AuditTarget.sol --config-file config/slither.raw.json --fail-none --json evidence/before_raw/slither.json
+SLITHER_VERSION:
+0.11.6
+
+SOLC_VERSION:
+solc, the solidity compiler commandline interface
+Version: 0.8.24+commit.e11b9ed9.Linux.g++
+
+
+Detector: msg-value-loop
+StakingPool_1113.splitDeposit(address[]) (AuditTarget.sol#75-79) use msg.value in a loop: shares[receivers[i]] += msg.value (AuditTarget.sol#77)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#msgvalue-inside-a-loop
+
+Detector: reentrancy-eth
+Reentrancy in StakingPool_1113.claimSafe() (AuditTarget.sol#85-90):
+	External calls:
+	- (ok,None) = msg.sender.call{value: a}() (AuditTarget.sol#87)
+	State variables written after the call(s):
+	- safeBalances[msg.sender] = 0 (AuditTarget.sol#89)
+	StakingPool_1113.safeBalances (AuditTarget.sol#17) can be used in cross function reentrancies:
+	- StakingPool_1113.claimSafe() (AuditTarget.sol#85-90)
+	- StakingPool_1113.safeBalances (AuditTarget.sol#17)
+	- StakingPool_1113.stakeSafe() (AuditTarget.sol#81-83)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
+
+Detector: suicidal
+StakingPool_1113.destroyPool() (AuditTarget.sol#64-66) allows anyone to destruct the contract
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#suicidal
+
+Detector: unchecked-transfer
+StakingPool_1113.convertRewards(uint256) (AuditTarget.sol#52-56) ignores return value by payToken.transfer(msg.sender,amount) (AuditTarget.sol#55)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unchecked-transfer
+
+Detector: tx-origin
+StakingPool_1113.setAdmin(address) (AuditTarget.sol#58-62) uses tx.origin for authorization: require(bool,string)(tx.origin == owner,not owner) (AuditTarget.sol#59)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-usage-of-txorigin
+
+Detector: timestamp
+StakingPool_1113.releaseTenth() (AuditTarget.sol#68-73) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= nextRelease,locked) (AuditTarget.sol#69)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in StakingPool_1113.ownerWithdraw(uint256) (AuditTarget.sol#42-45):
+	- (ok,None) = address(owner).call{value: amount}() (AuditTarget.sol#43)
+Low level call in StakingPool_1113.releaseTenth() (AuditTarget.sol#68-73):
+	- (ok,None) = address(owner).call{value: address(this).balance / 10}() (AuditTarget.sol#71)
+Low level call in StakingPool_1113.claimSafe() (AuditTarget.sol#85-90):
+	- (ok,None) = msg.sender.call{value: a}() (AuditTarget.sol#87)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+
+Detector: naming-convention
+Contract StakingPool_1113 (AuditTarget.sol#10-91) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+AuditTarget.sol analyzed (2 contracts with 102 detectors), 10 result(s) found
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'solc --version' running
+'solc AuditTarget.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/home/yuwkaa/Lab06_SinhVien' running
+Compilation warnings/errors on AuditTarget.sol:
+Warning: "selfdestruct" has been deprecated. Note that, starting from the Cancun hard fork, the underlying opcode no longer deletes the code and data associated with an account and only transfers its Ether to the beneficiary, unless executed in the same transaction in which the contract was created (see EIP-6780). Any use in newly deployed contracts is strongly discouraged even if the new behavior is taken into account. Future changes to the EVM might further reduce the functionality of the opcode.
+  --> AuditTarget.sol:65:9:
+   |
+65 |         selfdestruct(payable(msg.sender));
+   |         ^^^^^^^^^^^^
+
+

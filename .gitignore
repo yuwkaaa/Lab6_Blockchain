@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+slither.db.json
+.env
+submissions/
